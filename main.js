@@ -76,12 +76,43 @@ function addProduct({ title, price, description, image, category }) {
         });
 }
 
+const searchInput = document.querySelector("#search");
+const searchButton = document.querySelector("#search-btn");
+
+searchButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    performSearch();
+});
+
+searchInput.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        performSearch();
+    }
+});
+
+function performSearch() {
+    const searchText = searchInput.value.toLowerCase();
+
+    const productDivs = document.querySelectorAll(".product");
+
+    productDivs.forEach((productDiv) => {
+        const productTitle = productDiv.querySelector("h3").textContent.toLowerCase();
+        if (productTitle.includes(searchText)) {
+            productDiv.style.display = "block";
+        } else {
+            productDiv.style.display = "none";
+        }
+    });
+}
+
+
 function saveEditedProduct(productId, inputTitle, inputDescription, inputPrice) {
     const updatedTitle = inputTitle.value;
     const updatedDescription = inputDescription.value;
     const updatedPrice = inputPrice.value;
 
-    // Отправьте запрос на сервер для обновления товара
+
     fetch(`https://fakestoreapi.com/products/${productId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -95,15 +126,15 @@ function saveEditedProduct(productId, inputTitle, inputDescription, inputPrice) 
     })
         .then((res) => res.json())
         .then((updatedProduct) => {
-            // Замените input-поля на обновленные данные
+
             inputTitle.replaceWith(updatedProduct.title);
             inputDescription.replaceWith(updatedProduct.description);
             inputPrice.replaceWith(`Price: $${updatedProduct.price}`);
 
-            // Замените кнопку "Сохранить" на кнопку "Edit"
+
             const productDiv = document.querySelector(`.product[data-id="${productId}"]`);
             const saveButton = productDiv.querySelector(".edit-btn");
-            saveButton.textContent = "Edit"; // Используйте .textContent вместо .replaceWith
+            saveButton.textContent = "Edit";
         });
 }
 
@@ -125,7 +156,7 @@ function editProduct(productId) {
     const productDescription = productDiv.querySelector("p");
     const productPrice = productDiv.querySelector(".price");
 
-    // Создайте input-поля для редактирования
+
     const inputTitle = document.createElement("input");
     inputTitle.value = productTitle.textContent;
     const inputDescription = document.createElement("input");
@@ -133,29 +164,27 @@ function editProduct(productId) {
     const inputPrice = document.createElement("input");
     inputPrice.value = productPrice.textContent;
 
-    // Замените текстовые элементы на input-поля
     productTitle.replaceWith(inputTitle);
     productDescription.replaceWith(inputDescription);
     productPrice.replaceWith(inputPrice);
 
-    // Создайте кнопку "Сохранить" для сохранения изменений
     const saveButton = document.createElement("button");
     saveButton.textContent = "Save";
     saveButton.addEventListener("click", () => saveEditedProduct(productId, inputTitle, inputDescription, inputPrice));
     
-    // Замените кнопку "Edit" на кнопку "Сохранить"
+
     const editButton = productDiv.querySelector(".edit-btn");
     editButton.replaceWith(saveButton);
 }
 
-// 3. Добавьте функцию saveEditedProduct
-// В вашем файле JavaScript, после функции editProduct, добавьте следующий код:
+
+
 function saveEditedProduct(productId, inputTitle, inputDescription, inputPrice) {
     const updatedTitle = inputTitle.value;
     const updatedDescription = inputDescription.value;
     const updatedPrice = inputPrice.value;
 
-    // Отправьте запрос на сервер для обновления товара
+
     fetch(`https://fakestoreapi.com/products/${productId}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -169,12 +198,11 @@ function saveEditedProduct(productId, inputTitle, inputDescription, inputPrice) 
     })
     .then((res) => res.json())
     .then((updatedProduct) => {
-        // Замените input-поля на обновленные данные
+
         inputTitle.replaceWith(updatedProduct.title);
         inputDescription.replaceWith(updatedProduct.description);
         inputPrice.replaceWith(`Price: $${updatedProduct.price}`);
 
-        // Замените кнопку "Сохранить" на кнопку "Edit"
         const productDiv = document.querySelector(`.product[data-id="${productId}"]`);
         const saveButton = productDiv.querySelector(".save-btn");
         const editButton = document.createElement("button");
